@@ -17,8 +17,9 @@ app.use(bodyParser.json());
 var port     = process.env.PORT || 8080; // set our port
 
 var mongoose   = require('mongoose');
-mongoose.connect('mongodb://node:node@novus.modulusmongo.net:27017/Iganiq8o'); // connect to our database
+mongoose.connect('mongodb://dbuser:vocalist@ds127878.mlab.com:27878/crowdroutes'); // connect to our database
 var Bear     = require('./app/models/bear');
+var Place     = require('./app/models/place');
 
 // ROUTES FOR OUR API
 // =============================================================================
@@ -47,6 +48,7 @@ router.route('/bears')
 		
 		var bear = new Bear();		// create a new instance of the Bear model
 		bear.name = req.body.name;  // set the bears name (comes from the request)
+		bear.country = req.body.country;
 
 		bear.save(function(err) {
 			if (err)
@@ -104,6 +106,81 @@ router.route('/bears/:bear_id')
 		Bear.remove({
 			_id: req.params.bear_id
 		}, function(err, bear) {
+			if (err)
+				res.send(err);
+
+			res.json({ message: 'Successfully deleted' });
+		});
+	});
+
+// on routes that end in /places
+// ----------------------------------------------------
+router.route('/places')
+
+	// create a bear (accessed at POST http://localhost:8080/places)
+	.post(function(req, res) {
+		
+		var place = new Place();		// create a new instance of the Place model
+		place.name = req.body.name;  // set the bears name (comes from the request)
+		place.country = req.body.country;
+
+		place.save(function(err) {
+			if (err)
+				res.send(err);
+
+			res.json({ message: 'Place created!' });
+		});
+
+		
+	})
+
+	// get all the places (accessed at GET http://localhost:8080/api/places)
+	.get(function(req, res) {
+		Place.find(function(err, places) {
+			if (err)
+				res.send(err);
+
+			res.jsonp(places);
+		});
+	});
+
+// on routes that end in /places/:place_id
+// ----------------------------------------------------
+router.route('/places/:place_id')
+
+	// get the place with that id
+	.get(function(req, res) {
+		Place.findById(req.params.place_id, function(err, place) {
+			if (err)
+				res.send(err);
+			res.json(place);
+		});
+	})
+
+	// update the place with this id
+	.put(function(req, res) {
+		Place.findById(req.params.place_id, function(err, place) {
+
+			if (err)
+				res.send(err);
+
+			place.name = req.body.name;
+			place.country = req.body.country;
+			place.save(function(err) {
+				if (err)
+					res.send(err);
+
+				res.json({ message: 'Place updated!' });
+			});
+
+		});
+	})
+
+	// delete the place with this id
+	.delete(function(req, res) {
+		Place.remove({
+			_id: req.params.place_id
+		}, function(err, place) {
 			if (err)
 				res.send(err);
 
