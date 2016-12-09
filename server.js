@@ -188,6 +188,50 @@ router.route('/places/:place_id')
 		});
 	});
 
+	// on routes that end in /places/:place_name
+// ----------------------------------------------------
+router.route('/places/specific/:place_name')
+
+	// get the place with that id
+	.get(function(req, res) {
+		Place.findOne({name: req.params.place_name}, function(err, place) {
+			if (err)
+				res.send(err);
+			res.jsonp(place);
+		});
+	})
+
+	// update the place with this id
+	.put(function(req, res) {
+		Place.findOne(req.params.place_name, function(err, place) {
+
+			if (err)
+				res.send(err);
+
+			place.name = req.body.name;
+			place.country = req.body.country;
+			place.save(function(err) {
+				if (err)
+					res.send(err);
+
+				res.json({ message: 'Place updated!' });
+			});
+
+		});
+	})
+
+	// delete the place with this id
+	.delete(function(req, res) {
+		Place.remove({
+			_id: req.params.place_name
+		}, function(err, place) {
+			if (err)
+				res.send(err);
+
+			res.json({ message: 'Successfully deleted' });
+		});
+	});
+
 
 // REGISTER OUR ROUTES -------------------------------
 app.use('/api', router);
