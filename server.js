@@ -153,7 +153,7 @@ router.route('/places/:place_id')
 		Place.findById(req.params.place_id, function(err, place) {
 			if (err)
 				res.send(err);
-			res.json(place);
+			res.jsonp(place);
 		});
 	})
 
