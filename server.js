@@ -20,6 +20,7 @@ var mongoose   = require('mongoose');
 mongoose.connect('mongodb://dbuser:vocalist@ds127878.mlab.com:27878/crowdroutes'); // connect to our database
 var Bear     = require('./app/models/bear');
 var Place     = require('./app/models/place');
+var Journey     = require('./app/models/journey');
 
 // ROUTES FOR OUR API
 // =============================================================================
@@ -188,7 +189,7 @@ router.route('/places/:place_id')
 		});
 	});
 
-	// on routes that end in /places/:place_name
+// on routes that end in /places/:place_name
 // ----------------------------------------------------
 router.route('/places/specific/:place_name')
 
@@ -232,6 +233,307 @@ router.route('/places/specific/:place_name')
 		});
 	});
 
+// JOURNEYS ENDPOINYS ____________________________________________________
+// on routes that end in /journeys
+// ----------------------------------------------------
+router.route('/journeys')
+
+	// create a bear (accessed at POST http://localhost:8080/places)
+	.post(function(req, res) {
+		
+		var journey = new Journey();
+		journey.origin = req.body.origin;
+		journey.destination = req.body.destination;
+
+		journey.save(function(err) {
+			if (err)
+				res.send(err);
+
+			res.json({ message: 'Journey created!' });
+		});
+
+		
+	})
+
+	// get all the places (accessed at GET http://localhost:8080/api/places)
+	.get(function(req, res) {
+		Journey.find(function(err, journeys) {
+			if (err)
+				res.send(err);
+
+			res.jsonp(journeys);
+		});
+	});
+
+// on routes that end in /journeys/from/:origin
+// ----------------------------------------------------
+router.route('/journeys/from/:origin')
+
+	// get the place with that id
+	.get(function(req, res) {
+		Journey.find({'origin': req.params.origin}, function(err, journeys) {
+			if (err)
+				res.send(err);
+			res.jsonp(journeys);
+		});
+	})
+
+/*
+	// update the place with this id
+	.put(function(req, res) {
+		Place.findById(req.params.place_id, function(err, place) {
+
+			if (err)
+				res.send(err);
+
+			place.name = req.body.name;
+			place.country = req.body.country;
+			place.save(function(err) {
+				if (err)
+					res.send(err);
+
+				res.json({ message: 'Place updated!' });
+			});
+
+		});
+	})
+
+	// delete the place with this id
+	.delete(function(req, res) {
+		Place.remove({
+			_id: req.params.place_id
+		}, function(err, place) {
+			if (err)
+				res.send(err);
+
+			res.json({ message: 'Successfully deleted' });
+		});
+	});
+
+// on routes that end in /places/:place_name
+// ----------------------------------------------------
+router.route('/places/specific/:place_name')
+
+	// get the place with that id
+	.get(function(req, res) {
+		Place.findOne({name: req.params.place_name}, function(err, place) {
+			if (err)
+				res.send(err);
+			res.jsonp(place);
+		});
+	})
+
+	// update the place with this id
+	.put(function(req, res) {
+		Place.findOne(req.params.place_name, function(err, place) {
+
+			if (err)
+				res.send(err);
+
+			place.name = req.body.name;
+			place.country = req.body.country;
+			place.save(function(err) {
+				if (err)
+					res.send(err);
+
+				res.json({ message: 'Place updated!' });
+			});
+
+		});
+	})
+
+	// delete the place with this id
+	.delete(function(req, res) {
+		Place.remove({
+			_id: req.params.place_name
+		}, function(err, place) {
+			if (err)
+				res.send(err);
+
+			res.json({ message: 'Successfully deleted' });
+		});
+	});
+	*/
+
+	// on routes that end in /journeys/to/:destination
+// ----------------------------------------------------
+router.route('/journeys/to/:destination')
+
+	// get the place with that id
+	.get(function(req, res) {
+		Journey.find({'destination': req.params.destination}, function(err, journeys) {
+			if (err)
+				res.send(err);
+			res.jsonp(journeys);
+		});
+	})
+
+/*
+	// update the place with this id
+	.put(function(req, res) {
+		Place.findById(req.params.place_id, function(err, place) {
+
+			if (err)
+				res.send(err);
+
+			place.name = req.body.name;
+			place.country = req.body.country;
+			place.save(function(err) {
+				if (err)
+					res.send(err);
+
+				res.json({ message: 'Place updated!' });
+			});
+
+		});
+	})
+
+	// delete the place with this id
+	.delete(function(req, res) {
+		Place.remove({
+			_id: req.params.place_id
+		}, function(err, place) {
+			if (err)
+				res.send(err);
+
+			res.json({ message: 'Successfully deleted' });
+		});
+	});
+
+// on routes that end in /places/:place_name
+// ----------------------------------------------------
+router.route('/places/specific/:place_name')
+
+	// get the place with that id
+	.get(function(req, res) {
+		Place.findOne({name: req.params.place_name}, function(err, place) {
+			if (err)
+				res.send(err);
+			res.jsonp(place);
+		});
+	})
+
+	// update the place with this id
+	.put(function(req, res) {
+		Place.findOne(req.params.place_name, function(err, place) {
+
+			if (err)
+				res.send(err);
+
+			place.name = req.body.name;
+			place.country = req.body.country;
+			place.save(function(err) {
+				if (err)
+					res.send(err);
+
+				res.json({ message: 'Place updated!' });
+			});
+
+		});
+	})
+
+	// delete the place with this id
+	.delete(function(req, res) {
+		Place.remove({
+			_id: req.params.place_name
+		}, function(err, place) {
+			if (err)
+				res.send(err);
+
+			res.json({ message: 'Successfully deleted' });
+		});
+	});
+	*/
+
+	// on routes that end in /journeys/from/:origin/to/:destination
+// ----------------------------------------------------
+router.route('/journeys/from/:origin/to/:destination')
+
+	// get the place with that id
+	.get(function(req, res) {
+		Journey.find({'origin': req.params.origin, 'destination': req.params.destination}, function(err, journeys) {
+			if (err)
+				res.send(err);
+			res.jsonp(journeys);
+		});
+	})
+
+/*
+	// update the place with this id
+	.put(function(req, res) {
+		Place.findById(req.params.place_id, function(err, place) {
+
+			if (err)
+				res.send(err);
+
+			place.name = req.body.name;
+			place.country = req.body.country;
+			place.save(function(err) {
+				if (err)
+					res.send(err);
+
+				res.json({ message: 'Place updated!' });
+			});
+
+		});
+	})
+
+	// delete the place with this id
+	.delete(function(req, res) {
+		Place.remove({
+			_id: req.params.place_id
+		}, function(err, place) {
+			if (err)
+				res.send(err);
+
+			res.json({ message: 'Successfully deleted' });
+		});
+	});
+
+// on routes that end in /places/:place_name
+// ----------------------------------------------------
+router.route('/places/specific/:place_name')
+
+	// get the place with that id
+	.get(function(req, res) {
+		Place.findOne({name: req.params.place_name}, function(err, place) {
+			if (err)
+				res.send(err);
+			res.jsonp(place);
+		});
+	})
+
+	// update the place with this id
+	.put(function(req, res) {
+		Place.findOne(req.params.place_name, function(err, place) {
+
+			if (err)
+				res.send(err);
+
+			place.name = req.body.name;
+			place.country = req.body.country;
+			place.save(function(err) {
+				if (err)
+					res.send(err);
+
+				res.json({ message: 'Place updated!' });
+			});
+
+		});
+	})
+
+	// delete the place with this id
+	.delete(function(req, res) {
+		Place.remove({
+			_id: req.params.place_name
+		}, function(err, place) {
+			if (err)
+				res.send(err);
+
+			res.json({ message: 'Successfully deleted' });
+		});
+	});
+	*/
 
 // REGISTER OUR ROUTES -------------------------------
 app.use('/api', router);
