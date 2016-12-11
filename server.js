@@ -14,11 +14,21 @@ app.use(morgan('dev')); // log requests to the console
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+
+// Add headers
+app.use(function (req, res, next) {
+
+    res.header('Access-Control-Allow-Origin', "*");
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    next();
+});
+
+
 var port     = process.env.PORT || 8080; // set our port
 
 var mongoose   = require('mongoose');
 mongoose.connect('mongodb://dbuser:vocalist@ds127878.mlab.com:27878/crowdroutes'); // connect to our database
-var Bear     = require('./app/models/bear');
 var Place     = require('./app/models/place');
 var Journey     = require('./app/models/journey');
 
@@ -40,85 +50,11 @@ router.get('/', function(req, res) {
 	res.json({ message: 'hooray! welcome to our api!' });	
 });
 
-// on routes that end in /bears
-// ----------------------------------------------------
-router.route('/bears')
-
-	// create a bear (accessed at POST http://localhost:8080/bears)
-	.post(function(req, res) {
-		
-		var bear = new Bear();		// create a new instance of the Bear model
-		bear.name = req.body.name;  // set the bears name (comes from the request)
-		bear.country = req.body.country;
-
-		bear.save(function(err) {
-			if (err)
-				res.send(err);
-
-			res.json({ message: 'Bear created!' });
-		});
-
-		
-	})
-
-	// get all the bears (accessed at GET http://localhost:8080/api/bears)
-	.get(function(req, res) {
-		Bear.find(function(err, bears) {
-			if (err)
-				res.send(err);
-
-			res.json(bears);
-		});
-	});
-
-// on routes that end in /bears/:bear_id
-// ----------------------------------------------------
-router.route('/bears/:bear_id')
-
-	// get the bear with that id
-	.get(function(req, res) {
-		Bear.findById(req.params.bear_id, function(err, bear) {
-			if (err)
-				res.send(err);
-			res.json(bear);
-		});
-	})
-
-	// update the bear with this id
-	.put(function(req, res) {
-		Bear.findById(req.params.bear_id, function(err, bear) {
-
-			if (err)
-				res.send(err);
-
-			bear.name = req.body.name;
-			bear.save(function(err) {
-				if (err)
-					res.send(err);
-
-				res.json({ message: 'Bear updated!' });
-			});
-
-		});
-	})
-
-	// delete the bear with this id
-	.delete(function(req, res) {
-		Bear.remove({
-			_id: req.params.bear_id
-		}, function(err, bear) {
-			if (err)
-				res.send(err);
-
-			res.json({ message: 'Successfully deleted' });
-		});
-	});
-
 // on routes that end in /places
 // ----------------------------------------------------
 router.route('/places')
 
-	// create a bear (accessed at POST http://localhost:8080/places)
+	// create a place (accessed at POST http://localhost:8080/places)
 	.post(function(req, res) {
 		
 		var place = new Place();		// create a new instance of the Place model
@@ -238,12 +174,14 @@ router.route('/places/specific/:place_name')
 // ----------------------------------------------------
 router.route('/journeys')
 
-	// create a bear (accessed at POST http://localhost:8080/places)
-	.post(function(req, res) {
-		
+	// create a journey (accessed at POST http://localhost:8080/journeys)
+	.post(function(req, res, next) {
 		var journey = new Journey();
+		console.log('We made it!');
+		console.log("This is req.body: " + req.body);
 		journey.origin = req.body.origin;
 		journey.destination = req.body.destination;
+		console.log(journey);
 
 		journey.save(function(err) {
 			if (err)
@@ -447,14 +385,14 @@ router.route('/places/specific/:place_name')
 
 	// on routes that end in /journeys/from/:origin/to/:destination
 // ----------------------------------------------------
-router.route('/journeys/from/:origin/to/:destination')
-
+router.route('/journeys?origin=:origin&destination=:destination')
 	// get the place with that id
 	.get(function(req, res) {
 		Journey.find({'origin': req.params.origin, 'destination': req.params.destination}, function(err, journeys) {
 			if (err)
 				res.send(err);
 			res.jsonp(journeys);
+			console.log(journeys);
 		});
 	})
 
