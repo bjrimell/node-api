@@ -56,10 +56,8 @@ router.route('/places')
 
 	// create a place (accessed at POST http://localhost:8080/places)
 	.post(function(req, res) {
-		
 		var place = new Place();		// create a new instance of the Place model
-		place.name = req.body.name;  // set the bears name (comes from the request)
-		place.country = req.body.country;
+		place.name = req.body.name;
 
 		place.save(function(err) {
 			if (err)
@@ -177,23 +175,26 @@ router.route('/journeys')
 	// create a journey (accessed at POST http://localhost:8080/journeys)
 	.post(function(req, res, next) {
 		var journey = new Journey();
-		console.log('We made it!');
-		console.log("This is req.body: " + req.body);
 		journey.origin = req.body.origin;
 		journey.destination = req.body.destination;
-		console.log(journey);
-
+		journey.mode = req.body.mode,
+		journey.price = req.body.price,
+		journey.currency = req.body.currency,
+		journey.journeyDate = req.body.journeyDate,
+		journey.journeyDuration = req.body.journeyDuration,
+		journey.comments = req.body.comments,
+		journey.upVotes = req.body.upVotes,
+		journey.downVotes = req.body.downVotes
 		journey.save(function(err) {
 			if (err)
 				res.send(err);
 
 			res.json({ message: 'Journey created!' });
 		});
-
 		
 	})
 
-	// get all the places (accessed at GET http://localhost:8080/api/places)
+	// get all the journeys (accessed at GET http://localhost:8080/api/journeys)
 	.get(function(req, res) {
 		Journey.find(function(err, journeys) {
 			if (err)
@@ -385,7 +386,7 @@ router.route('/places/specific/:place_name')
 
 	// on routes that end in /journeys/from/:origin/to/:destination
 // ----------------------------------------------------
-router.route('/journeys?origin=:origin&destination=:destination')
+router.route('/journeys/from/:origin/to/:destination')
 	// get the place with that id
 	.get(function(req, res) {
 		Journey.find({'origin': req.params.origin, 'destination': req.params.destination}, function(err, journeys) {
