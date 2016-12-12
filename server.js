@@ -56,6 +56,7 @@ router.route('/places')
 
 	// create a place (accessed at POST http://localhost:8080/places)
 	.post(function(req, res) {
+
 		var place = new Place();		// create a new instance of the Place model
 		place.name = req.body.name;
 
@@ -65,7 +66,14 @@ router.route('/places')
 
 			res.json({ message: 'Place created!' });
 		});
+/*
+		place.save(function(err) {
+			if (err)
+				res.send(err);
 
+			res.json({ message: 'Place created!' });
+		});
+*/
 		
 	})
 
@@ -76,6 +84,16 @@ router.route('/places')
 				res.send(err);
 
 			res.jsonp(places);
+		});
+	})
+
+	// delete all places
+	.delete(function(req, res) {
+		Place.remove(function(err, place) {
+			if (err)
+				res.send(err);
+
+			res.json({ message: 'Successfully deleted all Places' });
 		});
 	});
 
@@ -183,8 +201,8 @@ router.route('/journeys')
 		journey.journeyDate = req.body.journeyDate,
 		journey.journeyDuration = req.body.journeyDuration,
 		journey.comments = req.body.comments,
-		journey.upVotes = req.body.upVotes,
-		journey.downVotes = req.body.downVotes
+		journey.upVotes = 0,
+		journey.downVotes = 0
 		journey.save(function(err) {
 			if (err)
 				res.send(err);
@@ -201,6 +219,16 @@ router.route('/journeys')
 				res.send(err);
 
 			res.jsonp(journeys);
+		});
+	})
+
+	// delete all journeys
+	.delete(function(req, res) {
+		Journey.remove(function(err, journey) {
+			if (err)
+				res.send(err);
+
+			res.json({ message: 'Successfully deleted all Journeys' });
 		});
 	});
 
