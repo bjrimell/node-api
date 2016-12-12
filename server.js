@@ -232,6 +232,50 @@ router.route('/journeys')
 		});
 	});
 
+router.route('/journeys/upvote/:id')
+
+	// upvote the journey with this id
+	.put(function(req, res) {
+		Journey.findById({'_id': req.params.id}, function(err, journey) {
+
+			if (err)
+				res.send(err);
+
+				console.log(journey);
+
+			journey.upVotes = journey.upVotes + 1;
+			journey.save(function(err) {
+				if (err)
+					res.send(err);
+
+				res.json({ message: 'Journey updated!' });
+			});
+
+		});
+	})
+
+	router.route('/journeys/downvote/:id')
+
+	// upvote the journey with this id
+	.put(function(req, res) {
+		Journey.findById({'_id': req.params.id}, function(err, journey) {
+
+			if (err)
+				res.send(err);
+
+				console.log(journey);
+
+			journey.downVotes = journey.downVotes + 1;
+			journey.save(function(err) {
+				if (err)
+					res.send(err);
+
+				res.json({ message: 'Journey updated!' });
+			});
+
+		});
+	})
+
 // on routes that end in /journeys/from/:origin
 // ----------------------------------------------------
 router.route('/journeys/from/:origin')
